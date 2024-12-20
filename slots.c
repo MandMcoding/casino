@@ -38,11 +38,14 @@ int main(int argc, char** argv){
 	// Setup
 	time_t current_time = time(NULL);
 	if(current_time == (time_t)-1){ perror("time"); return 0;} // Error check
+	srand(current_time);
 
 	char input = '0';
 	int wins = 0;
 	int money = 0;
-
+	char* outcome = (char*)calloc(col_num, sizeof(char)); // Array of char to save an outcome
+	char* wins_details = (char*)calloc(2, sizeof(char));
+	//char**  [[char,money],]
 	printf("Welcome to slots!\nType q to stop, press anything to SPIN!!!\n");
 	printf("First, how much money do you have?\nMoney: $");
 	if(scanf(" %10d", &money) < 1) return 1;
@@ -50,12 +53,11 @@ int main(int argc, char** argv){
 	// Start and Continue spinning if you have money or stop if you quit
 	while(money > 0 && (input != 'q' && input != 'Q')){
 		// Input
-		if(scanf(" %c", &input) < 1) return 1;
-		clear_screen()
+		if(scanf("%1c", &input) < 1) return 1;
+		clear_screen();
 
 		//char symbols[sym_num] = {💀, 🧌, 🔫}; // UTF attempt
 		char symbols[sym_num] = {'a', 'b', 'c'}; // Possible symbols/outcomes in a column
-		char* outcome = (char*)calloc(col_num, sizeof(char)); // Array of char to save an outcome
 
 		// One spin
 		for(int col = 0; col < col_num; col++){
@@ -66,9 +68,13 @@ int main(int argc, char** argv){
 		
 		// Check if the spin is a win
 		if(checkWin(outcome)){ 
+			wins_details[wins] = outcome[0];
+			wins_details = (char*)realloc(wins_details, wins+3);
+			wins_details[wins+2] = '\0';
+
 			wins++;
-			money += 5;
-			printf("CONGRATS!!!\nYOU ARE AT %d WINS!!!\nYou won $5 and now have $%d\n", wins, money);
+			money += 7;
+			printf("CONGRATS!!!\nYOU ARE AT %d WINS!!!\nYou won $7 and now have $%d\n", wins, money);
 		}
 		else{
 			money -= 1;
@@ -76,6 +82,16 @@ int main(int argc, char** argv){
 		}
 	}
 	printf("Total Wins: %d\n", wins);
+	for(int i = 0; i < wins; i++){
+		printf("%c %c %c\n", wins_details[i], wins_details[i], wins_details[i]);
+	}
+
+	// Outro
+	free(outcome);
+	outcome = NULL;
+	free(wins_details);
+	wins_details = NULL;
+
 	return 0;
 }
 
@@ -105,5 +121,6 @@ void print_help(char* exe_name) {
 		"  -m           Starting money (-1 or none for until spins run out)\n"
 		"  -s           Number of spins (-1 or none for until money runs out)\n"
 		"  --reels or columns or spinners Set how many reels are used\n"
-		"  --symbols    Define your own symbol set by using the format [sym1,sym2,...,symn]\n", exe_name);
+		"  --symbols    Define your own symbol set by using the format [sym1,sym2,...,symn]\n"
+		"  --seed       Set the starting seed\n", exe_name);
 }
