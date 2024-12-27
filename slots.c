@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-// #include unicode? UTF-8?
 
 #define sym_num 3
 #define col_num 3
@@ -43,7 +42,8 @@ int main(int argc, char** argv){
 	char input = '0';
 	int wins = 0;
 	int money = 0;
-	char* outcome[col_num] = {"👑", "💀", "💀"};
+	char* outcome[col_num] = {"\U0001F480", "\U0001F480", "\U0001F480"};
+	//char* outcome[col_num] = {"👑", "💀", "💀"};
 	/*char* outcome[col_num];
 	for(int i = 0; i < col_num; i++){
 		outcome[i] = malloc(4 * sizeof(char));} // Array of char to save an outcome*/
@@ -61,7 +61,13 @@ int main(int argc, char** argv){
 		if(scanf("%1c", &input) < 1) return 1;
 		clear_screen();
 
-		char* symbols[sym_num] = {"💀", "🧌", "🔫"}; // UTF
+		//char* symbols[sym_num] = {"💀", "🧌", "🔫"}; // UTF
+		char* symbols[sym_num] = {
+			"\U0001F480",  // 💀 Skull emoji (Unicode code point U+1F480)
+			"\U0001F9CC",  // 🧌 Mummy emoji (Unicode code point U+1F9CC)
+			"\U0001F52B"   // 🔫 Gun emoji (Unicode code point U+1F52B)
+		};
+
 		//char symbols[sym_num] = {'a', 'b', 'c'}; // Possible symbols/outcomes in a column
 
 		// One spin
@@ -93,10 +99,10 @@ int main(int argc, char** argv){
 	}*/
 
 	// Outro
-	for(int i = 0; i < col_num; i++){
+	/*for(int i = 0; i < col_num; i++){
 		free(outcome[i]);
 		outcome[i] = NULL;
-	}
+	}*/
 	/*free(wins_details);
 	wins_details = NULL;
 */
