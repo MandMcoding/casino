@@ -7,7 +7,7 @@
 #define sym_num 3
 #define col_num 3
 
-int checkWin(char* state);
+int checkWin(char** state);
 
 void print_help(char* exe_name);
 
@@ -43,9 +43,14 @@ int main(int argc, char** argv){
 	char input = '0';
 	int wins = 0;
 	int money = 0;
-	char* outcome = (char*)calloc(col_num, sizeof(char)); // Array of char to save an outcome
-	char* wins_details = (char*)calloc(2, sizeof(char));
+	char* outcome[col_num] = {"👑", "💀", "💀"};
+	/*char* outcome[col_num];
+	for(int i = 0; i < col_num; i++){
+		outcome[i] = malloc(4 * sizeof(char));} // Array of char to save an outcome*/
+	//char* outcome = (char*)calloc(col_num, sizeof(char)); // Array of char to save an outcome
+	//char* wins_details = (char*)calloc(2, sizeof(char));
 	//char**  [[char,money],]
+
 	printf("Welcome to slots!\nType q to stop, press anything to SPIN!!!\n");
 	printf("First, how much money do you have?\nMoney: $");
 	if(scanf(" %10d", &money) < 1) return 1;
@@ -56,22 +61,23 @@ int main(int argc, char** argv){
 		if(scanf("%1c", &input) < 1) return 1;
 		clear_screen();
 
-		//char symbols[sym_num] = {💀, 🧌, 🔫}; // UTF attempt
-		char symbols[sym_num] = {'a', 'b', 'c'}; // Possible symbols/outcomes in a column
+		char* symbols[sym_num] = {"💀", "🧌", "🔫"}; // UTF
+		//char symbols[sym_num] = {'a', 'b', 'c'}; // Possible symbols/outcomes in a column
 
 		// One spin
 		for(int col = 0; col < col_num; col++){
 			outcome[col] = symbols[rand() % sym_num];
-			printf("%c ", outcome[col]);
+			printf("%s ", outcome[col]);
 		}
 		printf("\n");
 		
 		// Check if the spin is a win
 		if(checkWin(outcome)){ 
+			/*
 			wins_details[wins] = outcome[0];
 			wins_details = (char*)realloc(wins_details, wins+3);
 			wins_details[wins+2] = '\0';
-
+*/
 			wins++;
 			money += 7;
 			printf("CONGRATS!!!\nYOU ARE AT %d WINS!!!\nYou won $7 and now have $%d\n", wins, money);
@@ -82,22 +88,24 @@ int main(int argc, char** argv){
 		}
 	}
 	printf("Total Wins: %d\n", wins);
-	for(int i = 0; i < wins; i++){
+	/*for(int i = 0; i < wins; i++){
 		printf("%c %c %c\n", wins_details[i], wins_details[i], wins_details[i]);
-	}
+	}*/
 
 	// Outro
-	free(outcome);
-	outcome = NULL;
-	free(wins_details);
+	for(int i = 0; i < col_num; i++){
+		free(outcome[i]);
+		outcome[i] = NULL;
+	}
+	/*free(wins_details);
 	wins_details = NULL;
-
+*/
 	return 0;
 }
 
 // Checks if the outcome was a win (1) or not (0) using col_num
 // WARNING: col_num must match the size of the state array
-int checkWin(char* state){
+int checkWin(char** state){
 	if(col_num <= 1) return 0; // Check if valid amount
 	// To check a win with a variable number of columns, check if each symbol matches the last until the end
 	// You can't do outcome[0] == outcome[1] == outcome[n]
@@ -119,8 +127,10 @@ void print_help(char* exe_name) {
 		"  -i           Input file\n"
 		"  -o           Output file\n"
 		"  -m           Starting money (-1 or none for until spins run out)\n"
-		"  -s           Number of spins (-1 or none for until money runs out)\n"
+		"  -spins       Number of spins (-1 or none for until money runs out)\n"
 		"  --reels or columns or spinners Set how many reels are used\n"
 		"  --symbols    Define your own symbol set by using the format [sym1,sym2,...,symn]\n"
+		"  --stats      Will display stats and graphs of your performance\n"
+		"  -a animation Displays spinning animation for each spin\n"
 		"  --seed       Set the starting seed\n", exe_name);
 }
